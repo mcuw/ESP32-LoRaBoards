@@ -1,10 +1,8 @@
 // see https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/examples/TBeamFactory/utilities.h
-#ifndef PINS_ARDUINO_H
-#define PINS_ARDUINO_H
+#ifndef Pins_Arduino_h
+#define Pins_Arduino_h
 
 #include <stdint.h>
-
-#define USING_SX1262
 
 #define SS 18
 #define MOSI 27
@@ -12,7 +10,7 @@
 #define SCK 5
 
 // SPI LoRa Radio
-#define LORA_SCK  5         // GPIO5  - SX1262 SCK
+#define LORA_SCK  5           // GPIO5  - SX1262 SCK
 #define LORA_MISO MISO        // GPIO19 - SX1262 MISO
 #define LORA_MOSI MOSI        // GPIO27 - SX1262 MOSI
 #define LORA_CS   SS          // GPIO18 - SX1262 CS
@@ -29,24 +27,19 @@
 
 #define BUTTON_PIN 38
 #define BUTTON_PIN_MASK GPIO_SEL_38
+#define BUTTON_ACTIVEHIGH 0
+#define BUTTON_PULLUP 1
+
 #define SDA 21
 #define SCL 22
-#define PMU_IRQ 35
+#define PMU_IRQ 35 // Battery ADC
 
 #define GPS_BAUD_RATE 9600
-#define HAS_GPS
-// #define HAS_DISPLAY //Optional, bring your own board, no OLED !!
-#define HAS_PMU
-#define PMU_WIRE_PORT               Wire
+#define PMU_WIRE_PORT Wire
 
+// #define HAS_DISPLAY //Optional, bring your own board, no OLED !!
 // #define DISPLAY_MODEL_SSD_LIB       SSD1306Wire
 // #define DISPLAY_MODEL               U8G2_SSD1306_128X64_NONAME_F_HW_I2C
-
-
-
-
-// static const uint8_t SDA = 21;
-// static const uint8_t SCL = 22;
 
 // static const uint8_t A0 = 36;
 // static const uint8_t A3 = 39;
@@ -72,4 +65,4 @@
 
 // static const uint8_t DAC1 = 25;
 
-#endif /* PINS_ARDUINO_H */
+#endif /* Pins_Arduino_h */
