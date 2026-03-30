@@ -5,23 +5,24 @@
 #include <SD.h>
 #include <RadioLib.h> // https://jgromes.github.io/RadioLib/class_s_x1262.html
 // https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/examples/TBeamFactory/TBeamFactory.ino
-#include "LgLoraBoards.h"
+#include "LgLoraBoard.h"
 
 // SX1262 radio = new Module(LORA_CS, LORA_IRQ, LORA_RST, LORA_IO2); // NSS, RST, DIO0
 // counter to keep track of transmitted packets
 int count = 0;
+LgLoraBoard board;
 
 void setup() {
   Serial.begin(115200);
 
   Serial.println("LoRa Sender");
 
-  setupRadioBoard();
+  board.setupRadioBoard();
 }
 
 void loop() {
   byte byteArr[] = {0x01, 0x23, 0x45, 0x56, 0x78, 0xAB, 0xCD, 0xEF};
-  int state = transmitRadioBytes(8, byteArr);
+  int state = board.transmitRadioBytes(8, byteArr);
 
   if (state == RADIOLIB_ERR_UNKNOWN) {
     Serial.println(F("Unknown error occurred!"));

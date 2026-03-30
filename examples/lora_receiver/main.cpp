@@ -4,22 +4,23 @@
 #include <SPI.h>
 #include <SD.h>
 
-#include "LgLoraBoards.h"
+#include "LgLoraBoard.h"
 
 static const char *TAG = "LgLoraReceiver";
+LgLoraBoard board;
 
 void setup() {
   Serial.begin(115200);
   Serial.println("LoRa Receiver");
 
-  setupRadioBoard();
+  board.setupRadioBoard();
 }
 
 void loop() {
-  int packetSize = hasRadio();
+  int packetSize = board.hasRadio();
   if (packetSize) {
     byte data[packetSize];
-    readRadioBytes(packetSize, data);
+    board.readRadioBytes(packetSize, data);
 
     Serial.print(F("Data:\t\t["));
     for (int i = 0; i < packetSize; i++) {

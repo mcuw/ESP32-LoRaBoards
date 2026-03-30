@@ -1,5 +1,7 @@
 #include <Arduino.h>
 
+#pragma once
+
 enum {
     POWERMANAGE_ONLINE  = _BV(0),
     DISPLAY_ONLINE      = _BV(1),
@@ -26,3 +28,5 @@ typedef struct {
     uint8_t         flashSize;
     uint8_t         flashSpeed;
 } DevInfo_t;
+
+typedef void (*callbackFunction)(void);

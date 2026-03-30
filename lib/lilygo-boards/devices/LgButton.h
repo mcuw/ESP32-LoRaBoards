@@ -3,10 +3,20 @@
 
 #ifdef HAS_BUTTON
 #include <OneButton.h>
+#include "../types/LgButtonTypes.h"
 
-typedef void (*callbackFunction)(void);
+class LgButton {
+public:
+    LgButton();
+    virtual ~LgButton();
 
-void setupButton(callbackFunction onClick, callbackFunction onDoubleClick = nullptr, callbackFunction onLongPress = nullptr);
+    void setupButton(callbackFunction onClick, callbackFunction onDoubleClick = nullptr, callbackFunction onLongPress = nullptr);
+private:
+    static void buttonTick(void *pvParameters);
+
+    OneButton* button;
+    TaskHandle_t taskButtonHandle;
+};
 
 #endif // HAS_BUTTON
 #endif // LG_BUTTON_H

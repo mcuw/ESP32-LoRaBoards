@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "LgLoraBoards.h"
+#include "LgLoraBoard.h"
 
 #ifdef HAS_PMU
 XPowersLibInterface *PMU = NULL;
@@ -39,7 +39,7 @@ bool beginPower()
         return false;
     }
 
-    deviceOnline |= POWERMANAGE_ONLINE;
+    LgLoraBoard::updateOnlineStatus(POWERMANAGE_ONLINE);
 
     PMU->setChargingLedMode(XPOWERS_CHG_LED_CTRL_CHG);
 

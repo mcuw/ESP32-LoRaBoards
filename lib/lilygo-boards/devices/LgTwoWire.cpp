@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "LgLoraBoards.h"
+#include "LgLoraBoard.h"
 #include "LgTwoWire.h"
 
 static const char *TAG = "LgTwoWire";
@@ -31,16 +31,16 @@ void scanDevices(TwoWire *w)
             case 0x77:
                 bme280_address = addr;
                 ESP_LOGI(TAG, "\tFound BME280 Sensor at address 0x%02X", addr);
-                deviceOnline |= BME280_ONLINE;
+                LgLoraBoard::updateOnlineStatus(BME280_ONLINE);
                 break;
             case 0x76:
                 bme280_address = addr;
                 ESP_LOGI(TAG, "\tFound BME280 Sensor at address 0x%02X", addr);
-                deviceOnline |= BME280_ONLINE;
+                LgLoraBoard::updateOnlineStatus(BME280_ONLINE);
                 break;
             case 0x34:
                 ESP_LOGI(TAG, "\tFound AXP192/AXP2101 PMU at address 0x%02X", addr);
-                deviceOnline |= POWERMANAGE_ONLINE;
+                LgLoraBoard::updateOnlineStatus(POWERMANAGE_ONLINE);
                 break;
             case 0x3C:
             case 0x3D:
@@ -54,23 +54,23 @@ void scanDevices(TwoWire *w)
                 {
                     ESP_LOGI(TAG, "\tFound QMC6310N MAG Sensor at address 0x%02X", addr);
                     mag_address = addr;
-                    deviceOnline |= QMC6310N_ONLINE;
+                    LgLoraBoard::updateOnlineStatus(QMC6310N_ONLINE);
                 }
                 else
                 {
                     ESP_LOGI(TAG, "\tFound OLED display at address 0x%02X", addr);
                     display_address = addr;
-                    deviceOnline |= DISPLAY_ONLINE;
+                    LgLoraBoard::updateOnlineStatus(DISPLAY_ONLINE);
                 }
             }
             break;
             case 0x51:
                 ESP_LOGI(TAG, "\tFound PCF8563 RTC at address 0x%02X", addr);
-                deviceOnline |= PCF8563_ONLINE;
+                LgLoraBoard::updateOnlineStatus(PCF8563_ONLINE);
                 break;
             case 0x1C:
                 ESP_LOGI(TAG, "\tFound QMC6310U MAG Sensor at address 0x%02X", addr);
-                deviceOnline |= QMC6310U_ONLINE;
+                LgLoraBoard::updateOnlineStatus(QMC6310U_ONLINE);
                 mag_address = addr;
                 break;
             default:

@@ -1,5 +1,7 @@
 #include <Arduino.h>
-#include "LgLoraBoards.h"
+#include "LgLoraBoard.h"
+
+LgLoraBoard board;
 
 void onButtonClick() {
   Serial.println("Button clicked");
@@ -17,7 +19,7 @@ void setup() {
   Serial.begin(115200);
   Serial.println("LoRa button example");
 
-  setupButton(onButtonClick, onButtonDoubleClick, onButtonLongPress);
+  board.setupButton(onButtonClick, onButtonDoubleClick, onButtonLongPress);
 }
 
 void loop() {
