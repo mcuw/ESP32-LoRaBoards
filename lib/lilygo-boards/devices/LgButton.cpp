@@ -28,13 +28,13 @@ void LgButton::buttonTick(void *pvParameters)
   }
 }
 
-void LgButton::setupButton(callbackFunction onClick, callbackFunction onDoubleClick, callbackFunction onLongPress)
+void LgButton::setupButton(callbackFunction onClickInterrupt, callbackFunction onDoubleClickInterrupt, callbackFunction onLongPressInterrupt)
 {
   button->setup(BUTTON_PIN, INPUT_PULLUP);
 
-  button->attachClick(onClick);
-  button->attachDoubleClick(onDoubleClick);
-  button->attachLongPressStart(onLongPress);
+  button->attachClick(onClickInterrupt);
+  button->attachDoubleClick(onDoubleClickInterrupt);
+  button->attachLongPressStart(onLongPressInterrupt);
 
   xTaskCreatePinnedToCore(
       buttonTick,                  // Function name of the task

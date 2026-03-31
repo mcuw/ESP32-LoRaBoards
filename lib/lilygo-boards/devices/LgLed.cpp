@@ -59,14 +59,8 @@ void LgLed::setupLed()
 
 void LgLed::enableBlinkLed(bool enable, uint32_t debounceDelay)
 {
-#ifdef HAS_LED
   _enabled = enable;
   _debounceDelay = debounceDelay;
-#else
-  ESP_LOGW(TAG, "LED not available on this board or not implemented yet");
+}
+
 #endif // HAS_LED
-  }
-
-
-
-#endif /* HAS_LED */

@@ -10,7 +10,7 @@ public:
     LgButton();
     virtual ~LgButton();
 
-    void setupButton(callbackFunction onClick, callbackFunction onDoubleClick = nullptr, callbackFunction onLongPress = nullptr);
+    void setupButton(callbackFunction onClickInterrupt, callbackFunction onDoubleClickInterrupt = nullptr, callbackFunction onLongPressInterrupt = nullptr);
 
 private:
     static void buttonTick(void *pvParameters);

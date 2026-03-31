@@ -35,6 +35,7 @@ bool beginPower()
         }
     }
 
+    // If PMU is not found at all, return false
     if (!PMU) {
         return false;
     }
@@ -47,9 +48,6 @@ bool beginPower()
     attachInterrupt(PMU_IRQ, setPmuFlag, FALLING);
 
     if (PMU->getChipModel() == XPOWERS_AXP192) {
-
-        PMU->setProtectedChannel(XPOWERS_DCDC3);
-
         // lora
         PMU->setPowerChannelVoltage(XPOWERS_LDO2, 3300);
         // gps
@@ -60,14 +58,14 @@ bool beginPower()
         PMU->enablePowerOutput(XPOWERS_LDO2);
         PMU->enablePowerOutput(XPOWERS_LDO3);
 
-        //protected oled power source
+        // protected oled power source
         PMU->setProtectedChannel(XPOWERS_DCDC1);
-        //protected esp32 power source
+        // protected esp32 power source
         PMU->setProtectedChannel(XPOWERS_DCDC3);
         // enable oled power
         PMU->enablePowerOutput(XPOWERS_DCDC1);
 
-        //disable not use channel
+        // disable not use channel
         PMU->disablePowerOutput(XPOWERS_DCDC2);
 
         PMU->disableIRQ(XPOWERS_AXP192_ALL_IRQ);

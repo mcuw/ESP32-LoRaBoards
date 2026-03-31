@@ -5,6 +5,8 @@
 
 // Sub band
 #if defined(USE_SX1262) || defined(USE_SX1276)
+#define CONFIG_MAX_PACKET_LENGTH 255
+
 #ifndef CONFIG_RADIO_FREQ
 #define CONFIG_RADIO_FREQ 868.0 // in MHz, must be within the frequency range of the module (e.g. 433.0 - 434.0, 868.0 or 915.0 MHz)
 #endif

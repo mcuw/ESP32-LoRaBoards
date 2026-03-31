@@ -36,6 +36,7 @@ static DevInfo_t devInfo;
 #if defined(USE_SX1262) || defined(USE_SX1276)
 // flag to indicate that a packet was received
 volatile bool receivedFlag = false;
+
 #if defined(ESP32)
 ICACHE_RAM_ATTR
 #endif
@@ -47,35 +48,36 @@ void setFlag()
 // String str;
 
 #ifdef USE_SX1262
-SX1262 radio = new Module(LORA_CS, LORA_IRQ, LORA_RST, LORA_IO2); // NSS, RST, DIO0
-#endif                                                            // USE_SX1262
+SX1262 radio = new Module(LORA_CS, LORA_IRQ, LORA_RST, LORA_IO2);
+#endif // USE_SX1262
 
 #ifdef USE_SX1276
-SX1276 radio = new Module(LORA_CS, LORA_IRQ, LORA_RST); // NSS, RST, DIO0
-#endif                                                  // USE_SX1276
-#endif                                                  // USE_SX1262 || USE_SX1276
+SX1276 radio = new Module(LORA_CS, LORA_IRQ, LORA_RST);
+#endif // USE_SX1276
+#endif // USE_SX1262 || USE_SX1276
 
-
-LgLoraBoard::LgLoraBoard() :
+LgLoraBoard::LgLoraBoard()
+{
 #ifdef HAS_BUTTON
-  button(new LgButton()),
+  button = new LgButton();
 #endif
 #ifdef HAS_LED
-  led(new LgLed())
+  led = new LgLed();
 #endif
-{
 };
 
 LgLoraBoard::~LgLoraBoard()
 {
 #ifdef HAS_BUTTON
-  if (button) {
+  if (button)
+  {
     delete button;
     button = nullptr;
   }
 #endif
 #ifdef HAS_LED
-  if (led) {
+  if (led)
+  {
     delete led;
     led = nullptr;
   }
@@ -194,6 +196,10 @@ void LgLoraBoard::setupRadioBoard()
 
   SerialGPS.begin(GPS_BAUD_RATE, SERIAL_8N1, GPS_RX_PIN, GPS_TX_PIN);
 #endif // HAS_GPS
+#ifdef GPS_RST_PIN
+  pinMode(GPS_RST_PIN, OUTPUT);
+  digitalWrite(GPS_RST_PIN, HIGH);
+#endif
 
 #if OLED_RST
   pinMode(OLED_RST, OUTPUT);
@@ -208,11 +214,6 @@ void LgLoraBoard::setupRadioBoard()
 #ifdef HAS_LED
   led->setupLed();
 #endif // HAS_LED
-
-#ifdef GPS_RST_PIN
-  pinMode(GPS_RST_PIN, OUTPUT);
-  digitalWrite(GPS_RST_PIN, HIGH);
-#endif
 
 #ifdef RADIO_LDO_EN
   /*
@@ -250,6 +251,7 @@ void LgLoraBoard::setupRadioBoard()
 #endif
 
 #ifdef I2C1_SDA
+  Wire1.begin(I2C1_SDA, I2C1_SCL);
   ESP_LOGD(TAG, "==================Scan Wire1==================");
   scanDevices(&Wire1);
 #endif
@@ -273,7 +275,7 @@ void LgLoraBoard::setupRadioBoard()
   // T-Beam v1.2 skips L76K
   find_gps = beginGPS();
 #endif
-  uint32_t baudrate[] = { 9600 }; // 19200, 38400, 57600, 115200, 230400, 460800, 921600, 4800
+  uint32_t baudrate[] = {9600}; // 19200, 38400, 57600, 115200, 230400, 460800, 921600, 4800
   if (!find_gps)
   {
     // Restore factory settings
@@ -303,13 +305,13 @@ void LgLoraBoard::setupRadioBoard()
 #ifdef T_BEAM_S3_SUPREME
   enable_slow_clock();
 #endif
+#endif // HAS_GPS
 
   bool radio_online = setupRadio(CONFIG_RADIO_RESTART_ON_FAIL);
   if (radio_online)
   {
     deviceOnline |= RADIO_ONLINE;
   }
-#endif
 }
 
 void LgLoraBoard::printBoardStatus()
@@ -373,11 +375,14 @@ void LgLoraBoard::printBoardStatus()
 
 bool LgLoraBoard::beginRadioLib(bool restartOnFail)
 {
+  ESP_LOGD(TAG, "LoRa: beginRadioLib");
+
 #if defined(USE_SX1262) || defined(USE_SX1276)
-  int state = radio.begin();
+  ESP_LOGD(TAG, "LoRa: radio initialization started");
+  int16_t state = radio.begin();
   if (state != RADIOLIB_ERR_NONE)
   {
-    ESP_LOGE(TAG, "LoRa initialization failed, code: %d", state);
+    ESP_LOGE(TAG, "LoRa: initialization failed, code: %d", state);
     if (restartOnFail)
     {
       delay(5000);
@@ -385,11 +390,11 @@ bool LgLoraBoard::beginRadioLib(bool restartOnFail)
     }
     return false;
   }
-  ESP_LOGD(TAG, "LoRa initialized successfully");
+  ESP_LOGD(TAG, "LoRa: initialized successfully");
 
   if (radio.setFrequency(CONFIG_RADIO_FREQ) == RADIOLIB_ERR_INVALID_FREQUENCY)
   {
-    ESP_LOGE(TAG, "Selected frequency is invalid for this module");
+    ESP_LOGE(TAG, "LoRa: selected frequency is invalid for this module");
     if (restartOnFail)
     {
       delay(5000);
@@ -401,7 +406,7 @@ bool LgLoraBoard::beginRadioLib(bool restartOnFail)
   // meshcore 62.5 kHz
   if (radio.setBandwidth(CONFIG_RADIO_BW) == RADIOLIB_ERR_INVALID_BANDWIDTH)
   {
-    ESP_LOGE(TAG, "Selected bandwidth is invalid for this module");
+    ESP_LOGE(TAG, "LoRa: selected bandwidth is invalid for this module");
     if (restartOnFail)
     {
       delay(5000);
@@ -413,7 +418,7 @@ bool LgLoraBoard::beginRadioLib(bool restartOnFail)
   // set spreading factor to 8
   if (radio.setSpreadingFactor(CONFIG_RADIO_SF) == RADIOLIB_ERR_INVALID_SPREADING_FACTOR)
   {
-    ESP_LOGE(TAG, "Selected spreading factor is invalid for this module");
+    ESP_LOGE(TAG, "LoRa: selected spreading factor is invalid for this module");
     if (restartOnFail)
     {
       delay(5000);
@@ -425,7 +430,7 @@ bool LgLoraBoard::beginRadioLib(bool restartOnFail)
   // set coding rate to 8
   if (radio.setCodingRate(CONFIG_RADIO_CR) == RADIOLIB_ERR_INVALID_CODING_RATE)
   {
-    ESP_LOGE(TAG, "Selected coding rate is invalid for this module");
+    ESP_LOGE(TAG, "LoRa: selected coding rate is invalid for this module");
     if (restartOnFail)
     {
       delay(5000);
@@ -437,7 +442,7 @@ bool LgLoraBoard::beginRadioLib(bool restartOnFail)
   // Secure set LoRa sync word
   if (radio.setSyncWord(CONFIG_RADIO_SYNC_WORD) != RADIOLIB_ERR_NONE)
   {
-    ESP_LOGE(TAG, "Unable to set sync word!");
+    ESP_LOGE(TAG, "LoRa: unable to set sync word!");
     if (restartOnFail)
     {
       delay(5000);
@@ -496,24 +501,27 @@ bool LgLoraBoard::beginRadioLib(bool restartOnFail)
 
 bool LgLoraBoard::setupRadio(bool restartOnFail)
 {
+  ESP_LOGD(TAG, "LoRa: setupRadio");
+
 #if defined(USE_SX1262) || defined(USE_SX1276)
   if (!beginRadioLib(restartOnFail))
   {
+    ESP_LOGE(TAG, "LoRa: Radio setup failed");
     return false;
   }
 
-  ESP_LOGD(TAG, "Radio is ready!");
+  ESP_LOGD(TAG, "LoRa: Radio is ready");
 
   // set the function that will be called
   // when new packet is received
   radio.setPacketReceivedAction(setFlag);
 
   // start listening for LoRa packets
-  ESP_LOGD(TAG, "Starting to listen ... ");
+  ESP_LOGD(TAG, "LoRa: Starting to listen...");
   int16_t state = radio.startReceive();
   if (state != RADIOLIB_ERR_NONE)
   {
-    ESP_LOGE(TAG, "Failed, code: %d", state);
+    ESP_LOGE(TAG, "LoRa: Failed, code: %d", state);
     if (restartOnFail)
     {
       delay(5000);
@@ -521,14 +529,12 @@ bool LgLoraBoard::setupRadio(bool restartOnFail)
     }
     return false;
   }
-  ESP_LOGD(TAG, "Started receive");
+  ESP_LOGD(TAG, "LoRa: Started receive");
   return true;
-#else
-  return beginLoraLib(restartOnFail);
 #endif // USE_SX1262 || USE_SX1276
 }
 
-int LgLoraBoard::hasRadio()
+int LgLoraBoard::hasRadioPacket()
 {
 #if defined(USE_SX1262) || defined(USE_SX1276)
   return receivedFlag ? radio.getPacketLength() : 0;
@@ -591,27 +597,52 @@ void LgLoraBoard::readRadioBytes(int packetSize, byte *data)
 
 int LgLoraBoard::transmitRadioBytes(int packetSize, byte *data)
 {
-  int state = radio.transmit(data, packetSize);
+  int state = RADIOLIB_ERR_NONE;
+
+  ESP_LOGD(TAG, "LoRa: transmitRadioBytes, packetSize: %d", packetSize);
+  if (packetSize <= 0)
+  {
+    ESP_LOGW(TAG, "LoRa: empty packet size: %d", packetSize);
+    return RADIOLIB_ERR_UNKNOWN;
+  }
+
+#if defined(USE_SX1262) || defined(USE_SX1276)
+  if (packetSize <= 0)
+  {
+    ESP_LOGW(TAG, "LoRa: Invalid packet size: %d", packetSize);
+    return RADIOLIB_ERR_UNKNOWN;
+  }
+
+  if (packetSize > CONFIG_MAX_PACKET_LENGTH)
+  {
+    ESP_LOGE(TAG, "LoRa: Invalid packet size: %d", packetSize);
+    return RADIOLIB_ERR_PACKET_TOO_LONG;
+  }
+
+  state = radio.transmit(data, packetSize);
+  ESP_LOGD(TAG, "LoRa: transmitRadioBytes, state: %d", state);
+
   if (state == RADIOLIB_ERR_NONE)
   {
     // packet was successfully transmitted
-    ESP_LOGD(TAG, "Packet transmitted!");
+    ESP_LOGD(TAG, "LoRa: Packet transmitted");
   }
   else
   {
     // some other error occurred
-    ESP_LOGE(TAG, "Failed to transmit data, code %d", state);
+    ESP_LOGE(TAG, "LoRa: Failed to transmit data, code %d", state);
   }
+#endif
 
   return state;
 }
 
-void LgLoraBoard::setupButton(callbackFunction onClick, callbackFunction onDoubleClick, callbackFunction onLongPress)
+void LgLoraBoard::setupButton(callbackFunction onClickInterrupt, callbackFunction onDoubleClickInterrupt, callbackFunction onLongPressInterrupt)
 {
 #ifdef HAS_BUTTON
-  button->setupButton(onClick, onDoubleClick, onLongPress);
+  button->setupButton(onClickInterrupt, onDoubleClickInterrupt, onLongPressInterrupt);
 #else
-  ESP_LOGW(TAG, "Button not available on this board or not implemented yet");
+  ESP_LOGW(TAG, "Button: setupButton is not available for this board or not configured in platformio.ini");
 #endif
 }
 
@@ -622,10 +653,18 @@ void LgLoraBoard::updateOnlineStatus(uint32_t status)
 
 void LgLoraBoard::blinkLed(uint32_t debounceDelay)
 {
+#ifdef HAS_LED
   led->enableBlinkLed(true, debounceDelay);
+#else
+  ESP_LOGW(TAG, "LED: blinkLed is not available on this board or not configured in platformio.ini");
+#endif
 }
 
 void LgLoraBoard::disableLed()
 {
+#ifdef HAS_LED
   led->enableBlinkLed(false);
+#else
+  ESP_LOGW(TAG, "LED: disableLed is not available on this board or not configured in platformio.ini");
+#endif
 }
