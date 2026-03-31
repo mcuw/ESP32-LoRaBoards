@@ -554,44 +554,30 @@ void LgLoraBoard::readRadioBytes(int packetSize, byte *data)
     if (state == RADIOLIB_ERR_NONE)
     {
       // packet was successfully received
-      ESP_LOGD(TAG, "Received packet!");
+      ESP_LOGD(TAG, "LoRa: Received packet!");
 
       // Serial.print(str);
 
-      // // print RSSI (Received Signal Strength Indicator)
-      // Serial.print(F("RSSI:\t\t"));
-      // Serial.print(radio.getRSSI());
-      // Serial.println(F(" dBm"));
+      // print RSSI (Received Signal Strength Indicator)
+      ESP_LOGD(TAG, "LoRa: RSSI:\t\t%.2f dBm", radio.getRSSI());
 
-      // // print SNR (Signal-to-Noise Ratio)
-      // Serial.print(F("SNR:\t\t"));
-      // Serial.print(radio.getSNR());
-      // Serial.println(F(" dB"));
+      // print SNR (Signal-to-Noise Ratio)
+      ESP_LOGD(TAG, "LoRa: SNR:\t\t%.2f dB", radio.getSNR());
 
-      // // print frequency error
-      // Serial.print(F("Frequency error:\t"));
-      // Serial.print(radio.getFrequencyError());
-      // Serial.println(F(" Hz"));
+      // print frequency error
+      ESP_LOGD(TAG, "LoRa: Frequency error:\t%.2f Hz", radio.getFrequencyError());
     }
     else if (state == RADIOLIB_ERR_CRC_MISMATCH)
     {
       // packet was received, but is malformed
-      ESP_LOGE(TAG, "CRC error!");
+      ESP_LOGE(TAG, "LoRa: CRC error!");
     }
     else
     {
       // some other error occurred
-      ESP_LOGE(TAG, "Failed to receive data, code %d", state);
+      ESP_LOGE(TAG, "LoRa: Failed to receive data, code %d", state);
     }
   }
-// #else
-//     if (packetSize) {
-//         int i = 0;
-//         while (LoRa.available() && i < packetSize) {
-//             data[i++] = LoRa.read();
-//         }
-//         ESP_LOGD(TAG, "Received packet!");
-//     }
 #endif // USE_SX1262 || USE_SX1276
 }
 
