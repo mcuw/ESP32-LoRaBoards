@@ -41,23 +41,35 @@ void loop() {
     byte byteArr[] = {0x01, 0x23, 0x45, 0x56, 0x78, 0xAB, 0xCD, 0xEF};
     int state = board.transmitRadioBytes(8, byteArr);
 
-    if (state == RADIOLIB_ERR_UNKNOWN) {
-      Serial.println(F("An unknown error occurred during packet transmission!"));
-    } else if (state == RADIOLIB_ERR_CHIP_NOT_FOUND) {
-      Serial.println(F("LoRa radio not found!"));
-    } else if (state == RADIOLIB_ERR_NONE) {
+
+    switch (state) {
+      case RADIOLIB_ERR_UNKNOWN:
+        Serial.println(F("An unknown error occurred during packet transmission"));
+        break;
+
+      case RADIOLIB_ERR_CHIP_NOT_FOUND:
+        Serial.println(F("LoRa radio not found"));
+        break;
+
       // the packet was successfully transmitted
-      Serial.println(F("The packet was successfully transmitted"));
-    } else if (state == RADIOLIB_ERR_PACKET_TOO_LONG) {
-      // the supplied packet was longer than 256 bytes
-      Serial.println(F("The packet is too long to be transmitted"));
-    } else if (state == RADIOLIB_ERR_TX_TIMEOUT) {
+      case RADIOLIB_ERR_NONE:
+        Serial.println(F("The packet was successfully transmitted"));
+        break;
+
+      // the supplied packet was longer than maximum allowed package size (255 bytes)
+      case RADIOLIB_ERR_PACKET_TOO_LONG:
+        Serial.println(F("The packet is too long to be transmitted"));
+        break;
+
       // timeout occured while transmitting packet
-      Serial.println(F("The packet transmission timed out"));
-    } else {
-      // some other error occurred
-      Serial.print(F("The packet transmission failed, code "));
-      Serial.println(state);
+      case RADIOLIB_ERR_TX_TIMEOUT:
+        Serial.println(F("The packet transmission timed out"));
+        break;
+
+      default:
+        Serial.print(F("The packet transmission failed, code "));
+        Serial.println(state);
+        break;
     }
   }
 
