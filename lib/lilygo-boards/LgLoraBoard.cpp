@@ -258,7 +258,7 @@ void LgLoraBoard::setupRadioBoard()
 
   beginSDCard();
 
-#ifdef HAS_DISPLAY
+#ifdef HAS_DISPLAY_SSD1306
   beginDisplay();
 #endif
 

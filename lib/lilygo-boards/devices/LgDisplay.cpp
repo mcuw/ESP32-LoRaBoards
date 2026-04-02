@@ -1,31 +1,36 @@
+#ifdef HAS_DISPLAY_SSD1306
 #include <Arduino.h>
+#include <Wire.h>
+#include "config.h"
+#include "LgDisplay.h"
 
-#ifdef HAS_DISPLAY
-U8G2 *disp = NULL;
+#ifndef DISPLAY_MODEL
+#include "SSD1306Wire.h"
+#define DISPLAY_MODEL SSD1306Wire
+#endif // DISPLAY_MODEL
+
+static const char *TAG = "LgDisplay";
+
+DISPLAY_MODEL display(DISPLAY_ADDR, OLED_SDA, OLED_SCL);
 
 bool beginDisplay()
 {
-    Wire.beginTransmission(display_address);
-    if (Wire.endTransmission() == 0) {
-        disp = new DISPLAY_MODEL(U8G2_R0, U8X8_PIN_NONE);
-        Serial.printf("Find Display model at 0x%X address\n", display_address);
-        disp->begin();
-        disp->clearBuffer();
-        disp->setFont(u8g2_font_inb19_mr);
-        disp->drawStr(0, 30, "LilyGo");
-        disp->drawHLine(2, 35, 47);
-        disp->drawHLine(3, 36, 47);
-        disp->drawVLine(45, 32, 12);
-        disp->drawVLine(46, 33, 12);
-        disp->setFont(u8g2_font_inb19_mf);
-        disp->drawStr(58, 60, "LoRa");
-        disp->sendBuffer();
-        disp->setFont(u8g2_font_fur11_tf);
-        delay(3000);
-        return true;
-    }
+  ESP_LOGD(TAG, "beginDisplay");
 
-    ESP_LOGE(TAG, "Warning: Failed to find Display at 0x%0X address\n", display_address);
+  bool success = display.init();
+  if (!success)
+  {
+    ESP_LOGE(TAG, "Failed to initialize display");
     return false;
+  }
+
+  display.flipScreenVertically();
+  display.clear();
+  display.setFont(ArialMT_Plain_16);
+  display.setTextAlignment(TEXT_ALIGN_CENTER);
+  display.drawString(display.getWidth() / 2, (display.getHeight() / 2) - 16, F("ESP32 LoRa"));
+  display.display();
+
+  return true;
 }
-#endif // HAS_DISPLAY
+#endif // HAS_DISPLAY_SSD1306

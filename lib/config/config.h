@@ -80,3 +80,10 @@
 #endif
 
 #endif // !defined(USE_SX1262) && !defined(USE_SX1276)
+
+#ifdef HAS_DISPLAY_SSD1306
+#ifndef DISPLAY_ADDR
+// I2C address of the display, commonly 0x3C or 0x3D, check your display's datasheet or use an I2C scanner to find the correct address
+#define DISPLAY_ADDR 0x3C
+#endif // DISPLAY_ADDR
+#endif // HAS_DISPLAY_SSD1306

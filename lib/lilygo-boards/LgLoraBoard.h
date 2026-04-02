@@ -6,8 +6,8 @@
  * @date        2026-03-26
  * @last-update 2026-03-26
  */
-// examples https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/examples/TBeamFactory/TBeamFactory.ino
-
+// examples: https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/examples/TBeamFactory/TBeamFactory.ino
+// references: https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series/blob/master/examples/TBeamFactory/LoRaBoards.cpp
 // RadioLib for SX126x/ SX127x modules, see e.g. /.pio/libdeps/ttgo_t_beam_v1_1/RadioLib/src/modules
 
 #ifndef LG_LORA_BOARD_H
