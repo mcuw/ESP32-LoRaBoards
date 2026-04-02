@@ -24,7 +24,7 @@ void LgButton::buttonTick(void *pvParameters)
   for (;;)
   {
     self->button->tick();
-    vTaskDelay(CONFIG_BUTTON_TICK_INTERVAL_MS / portTICK_PERIOD_MS);
+    vTaskDelay(LORA_BUTTON_TICK_INTERVAL_MS / portTICK_PERIOD_MS);
   }
 }
 
@@ -41,9 +41,9 @@ void LgButton::setupButton(callbackFunction onClickInterrupt, callbackFunction o
       "Builtin Button",            // Name of the task (e.g. for debugging)
       1024,                        // Stack size (bytes)
       this,                        // Parameter to pass
-      CONFIG_BUTTON_TASK_PRIORITY, // Task priority
+      LORA_BUTTON_TASK_PRIORITY, // Task priority
       &taskButtonHandle,           // Assign task handle
-      CONFIG_BUTTON_CORE           // Run on core 1
+      LORA_BUTTON_CORE           // Run on core 1
   );
 }
 #endif // HAS_BUTTON

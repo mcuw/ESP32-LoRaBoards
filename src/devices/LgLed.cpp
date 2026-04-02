@@ -36,7 +36,7 @@ void LgLed::loopLed(void *pvParameters)
       }
     }
 
-    vTaskDelay(CONFIG_LED_TICK_INTERVAL_MS / portTICK_PERIOD_MS);
+    vTaskDelay(LORA_LED_TICK_INTERVAL_MS / portTICK_PERIOD_MS);
   }
 }
 
@@ -56,9 +56,9 @@ void LgLed::setupLed()
     "Builtin LED",            // Name of the task (e.g. for debugging)
     1024,                     // Stack size (bytes)
     this,                     // Parameter to pass
-    CONFIG_LED_TASK_PRIORITY, // Task priority
+    LORA_LED_TASK_PRIORITY, // Task priority
     &taskLedHandle,           // Assign task handle
-    CONFIG_LED_CORE           // Run on core 1
+    LORA_LED_CORE           // Run on core 1
   );
 }
 

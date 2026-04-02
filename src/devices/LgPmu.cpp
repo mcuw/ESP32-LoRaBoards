@@ -81,7 +81,7 @@ bool beginPower()
 
     } else if (PMU->getChipModel() == XPOWERS_AXP2101) {
 
-#if defined(CONFIG_IDF_TARGET_ESP32)
+#ifdef CONFIG_IDF_TARGET_ESP32
         //Unuse power channel
         PMU->disablePowerOutput(XPOWERS_DCDC2);
         PMU->disablePowerOutput(XPOWERS_DCDC3);
@@ -116,8 +116,7 @@ bool beginPower()
 #endif /*CONFIG_IDF_TARGET_ESP32*/
 
 
-#if defined(T_BEAM_S3_SUPREME)
-
+#ifdef T_BEAM_S3_SUPREME
         //t-beam m.2 inface
         //gps
         PMU->setPowerChannelVoltage(XPOWERS_ALDO4, 3300);
@@ -171,8 +170,7 @@ bool beginPower()
         PMU->disablePowerOutput(XPOWERS_VBACKUP);
 
 
-#elif defined(T_BEAM_S3_BPF)
-
+#elifdef T_BEAM_S3_BPF
         //gps
         PMU->setPowerChannelVoltage(XPOWERS_ALDO4, 3300);
         PMU->enablePowerOutput(XPOWERS_ALDO4);
@@ -201,8 +199,6 @@ bool beginPower()
         PMU->disablePowerOutput(XPOWERS_DLDO1);
         PMU->disablePowerOutput(XPOWERS_DLDO2);
         PMU->disablePowerOutput(XPOWERS_VBACKUP);
-
-
 #endif
 
         // Set constant current charge current limit

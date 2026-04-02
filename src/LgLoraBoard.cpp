@@ -317,7 +317,7 @@ void LgLoraBoard::setupRadioBoard()
 #endif
 #endif // HAS_GPS
 
-  bool radio_online = setupRadio(CONFIG_RADIO_RESTART_ON_FAIL);
+  bool radio_online = setupRadio(LORA_RADIO_RESTART_ON_FAIL);
   if (radio_online)
   {
     deviceOnline |= RADIO_ONLINE;
@@ -373,7 +373,7 @@ bool LgLoraBoard::beginRadioLib(bool restartOnFail)
   }
   ESP_LOGD(TAG, "LoRa: initialized successfully");
 
-  if (radio.setFrequency(CONFIG_RADIO_FREQ) == RADIOLIB_ERR_INVALID_FREQUENCY)
+  if (radio.setFrequency(LORA_RADIO_FREQ) == RADIOLIB_ERR_INVALID_FREQUENCY)
   {
     ESP_LOGE(TAG, "LoRa: selected frequency is invalid for this module");
     if (restartOnFail)
@@ -385,7 +385,7 @@ bool LgLoraBoard::beginRadioLib(bool restartOnFail)
   }
 
   // meshcore 62.5 kHz
-  if (radio.setBandwidth(CONFIG_RADIO_BW) == RADIOLIB_ERR_INVALID_BANDWIDTH)
+  if (radio.setBandwidth(LORA_RADIO_BW) == RADIOLIB_ERR_INVALID_BANDWIDTH)
   {
     ESP_LOGE(TAG, "LoRa: selected bandwidth is invalid for this module");
     if (restartOnFail)
@@ -397,7 +397,7 @@ bool LgLoraBoard::beginRadioLib(bool restartOnFail)
   }
 
   // set spreading factor to 8
-  if (radio.setSpreadingFactor(CONFIG_RADIO_SF) == RADIOLIB_ERR_INVALID_SPREADING_FACTOR)
+  if (radio.setSpreadingFactor(LORA_RADIO_SF) == RADIOLIB_ERR_INVALID_SPREADING_FACTOR)
   {
     ESP_LOGE(TAG, "LoRa: selected spreading factor is invalid for this module");
     if (restartOnFail)
@@ -409,7 +409,7 @@ bool LgLoraBoard::beginRadioLib(bool restartOnFail)
   }
 
   // set coding rate to 8
-  if (radio.setCodingRate(CONFIG_RADIO_CR) == RADIOLIB_ERR_INVALID_CODING_RATE)
+  if (radio.setCodingRate(LORA_RADIO_CR) == RADIOLIB_ERR_INVALID_CODING_RATE)
   {
     ESP_LOGE(TAG, "LoRa: selected coding rate is invalid for this module");
     if (restartOnFail)
@@ -421,7 +421,7 @@ bool LgLoraBoard::beginRadioLib(bool restartOnFail)
   }
 
   // Secure set LoRa sync word
-  if (radio.setSyncWord(CONFIG_RADIO_SYNC_WORD) != RADIOLIB_ERR_NONE)
+  if (radio.setSyncWord(LORA_RADIO_SYNC_WORD) != RADIOLIB_ERR_NONE)
   {
     ESP_LOGE(TAG, "LoRa: unable to set sync word!");
     if (restartOnFail)
@@ -433,26 +433,26 @@ bool LgLoraBoard::beginRadioLib(bool restartOnFail)
   }
 
   // // set output power to 22 dBm (accepted range is -17 - 22 dBm)
-  // if (radio.setOutputPower(CONFIG_RADIO_OUTPUT_POWER) == RADIOLIB_ERR_INVALID_OUTPUT_POWER) {
+  // if (radio.setOutputPower(LORA_RADIO_OUTPUT_POWER) == RADIOLIB_ERR_INVALID_OUTPUT_POWER) {
   //   ESP_LOGE(TAG, "Selected output power is invalid for this module!");
   //   while (true) { delay(10); }
   // }
 
   // // set over current protection limit to 80 mA (accepted range is 45 - 240 mA)
   // // NOTE: set value to 0 to disable overcurrent protection
-  // if (radio.setCurrentLimit(CONFIG_RADIO_CURRENT_LIMIT) == RADIOLIB_ERR_INVALID_CURRENT_LIMIT) {
+  // if (radio.setCurrentLimit(LORA_RADIO_CURRENT_LIMIT) == RADIOLIB_ERR_INVALID_CURRENT_LIMIT) {
   //   ESP_LOGE(TAG, "Selected current limit is invalid for this module!");
   //   while (true) { delay(10); }
   // }
 
   // // set LoRa preamble length to 15 symbols (accepted range is 0 - 65535)
-  // if (radio.setPreambleLength(CONFIG_RADIO_PREAMBLE_LENGTH) == RADIOLIB_ERR_INVALID_PREAMBLE_LENGTH) {
+  // if (radio.setPreambleLength(LORA_RADIO_PREAMBLE_LENGTH) == RADIOLIB_ERR_INVALID_PREAMBLE_LENGTH) {
   //   ESP_LOGE(TAG, "Selected preamble length is invalid for this module");
   //   while (true) { delay(10); }
   // }
 
   // // disable CRC
-  // if (radio.setCRC(CONFIG_RADIO_CRC) == RADIOLIB_ERR_INVALID_CRC_CONFIGURATION) {
+  // if (radio.setCRC(LORA_RADIO_CRC) == RADIOLIB_ERR_INVALID_CRC_CONFIGURATION) {
   //   ESP_LOGE(TAG, "Selected CRC is invalid for this module");
   //   while (true) { delay(10); }
   // }
@@ -580,7 +580,7 @@ int LgLoraBoard::transmitRadioBytes(int packetSize, byte *data)
     return RADIOLIB_ERR_UNKNOWN;
   }
 
-  if (packetSize > CONFIG_MAX_PACKET_LENGTH)
+  if (packetSize > LORA_MAX_PACKET_LENGTH)
   {
     ESP_LOGE(TAG, "LoRa: Invalid packet size: %d", packetSize);
     return RADIOLIB_ERR_PACKET_TOO_LONG;
