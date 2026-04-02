@@ -64,6 +64,9 @@ LgLoraBoard::LgLoraBoard()
 #ifdef HAS_LED
   led = new LgLed();
 #endif
+#ifdef HAS_DISPLAY_SSD1306
+  display = new LgDisplay();
+#endif
 };
 
 LgLoraBoard::~LgLoraBoard()
@@ -80,6 +83,13 @@ LgLoraBoard::~LgLoraBoard()
   {
     delete led;
     led = nullptr;
+  }
+#endif
+#ifdef HAS_DISPLAY_SSD1306
+  if (display)
+  {
+    delete display;
+    display = nullptr;
   }
 #endif
 }
@@ -259,7 +269,7 @@ void LgLoraBoard::setupRadioBoard()
   beginSDCard();
 
 #ifdef HAS_DISPLAY_SSD1306
-  beginDisplay();
+  display->beginDisplay();
 #endif
 
   // scanWiFi();

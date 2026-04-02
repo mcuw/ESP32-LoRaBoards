@@ -28,6 +28,7 @@
 #include "devices/LgTwoWire.h"
 
 class LgButton;
+class LgDisplay;
 class LgLed;
 
 class LgLoraBoard {
@@ -69,6 +70,7 @@ private:
 
     static uint32_t deviceOnline;
     LgButton* button;
+    LgDisplay* display;
     LgLed* led;
 };
 
