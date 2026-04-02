@@ -4,7 +4,7 @@
 
 void beginWiFi()
 {
-    const char* ssid = BOARD_VARIANT_NAME;
+    const char ssid[] = BOARD_VARIANT_NAME;
     if (!WiFi.softAP(ssid)) {
         log_e("Soft AP creation failed.");
     }
