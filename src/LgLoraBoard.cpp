@@ -161,10 +161,11 @@ void LgLoraBoard::printChipInfo()
   ESP_LOGD(TAG, "DATE: %s", __DATE__);
   ESP_LOGD(TAG, "TIME: %s", __TIME__);
 
-  uint8_t mac[6];
   char macStr[18] = {0};
-  esp_efuse_mac_get_default(mac);
-  sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+  uint64_t chipid = ESP.getEfuseMac();
+  sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X",
+          (uint8_t)(chipid >> 40), (uint8_t)(chipid >> 32), (uint8_t)(chipid >> 24),
+          (uint8_t)(chipid >> 16), (uint8_t)(chipid >> 8), (uint8_t)chipid);
   ESP_LOGD(TAG, "EFUSE MAC: %s", macStr);
 
   ESP_LOGD(TAG, "-----------------------------------");
@@ -349,7 +350,7 @@ void LgLoraBoard::printBoardStatus()
   ESP_LOGD(TAG, "GPS          : %s", find_gps ? "+" : "-");
 #endif
 
-// TODO show status on display if available
+  // TODO show status on display if available
 
 #endif // defined(CONFIG_IDF_TARGET_ESP32) || defined(CONFIG_IDF_TARGET_ESP32S3)
 }
