@@ -22,9 +22,9 @@ git clone https://github.com/mcuw/ESP32-ghbuild-template.git YOUR-APP
 ```
 replace `YOUR-APP` with your custom application name
 
-2. add this library to your Arduino project, search for `MCUW LoRa boards`
+2. Add this library to your Arduino project, search for `MCUW LoRa boards`
 
-3. copy the config template to lib/config/config.h
+3. Copy the config template to lib/config/config.h
 
 template https://raw.githubusercontent.com/mcuw/LoRaBoards/refs/heads/main/lib/config/config.h
 ```sh
@@ -33,7 +33,7 @@ cd lib/config
 wget https://raw.githubusercontent.com/mcuw/LoRaBoards/refs/heads/main/lib/config/config.h
 ```
 
-4. ensure that the config can be find as includes
+4. Ensure that the config can be find as includes
 ```ini
 [env]
 build-flags = -I lib/config
