@@ -28,7 +28,7 @@ replace `YOUR-APP` with your custom application name
 
 template https://raw.githubusercontent.com/mcuw/LoRaBoards/refs/heads/main/lib/config/config.h
 ```sh
-mkdir lib/config
+mkdir -p lib/config
 cd lib/config
 wget https://raw.githubusercontent.com/mcuw/LoRaBoards/refs/heads/main/lib/config/config.h
 ```
