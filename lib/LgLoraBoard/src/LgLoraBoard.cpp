@@ -466,6 +466,7 @@ bool LgLoraBoard::beginRadioLib(bool restartOnFail)
     ESP.restart();
   }
 
+#ifdef USE_SX1262
   // Some SX126x modules have TCXO (temperature compensated crystal
   // oscillator). To configure TCXO reference voltage,
   // the following method can be used.
@@ -484,6 +485,7 @@ bool LgLoraBoard::beginRadioLib(bool restartOnFail)
     delay(5000);
     ESP.restart();
   }
+#endif // ifdef USE_SX1262
 
   return true;
 #endif // defined(USE_SX1262) || defined(USE_SX1276)
