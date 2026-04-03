@@ -1,5 +1,7 @@
 # Arduino library for LoRa boards
 
+<video src="assets/lora_demo.mp4"></video>
+
 ## Features 
 
 - Quick kickstart your [LoRa](https://lora-alliance.org) projects
