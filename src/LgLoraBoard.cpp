@@ -254,17 +254,15 @@ void LgLoraBoard::setupRadioBoard()
   beginPower();
 #endif
 
-// Perform an I2C scan after power-on operation
-#ifdef SDA
+  // Perform an I2C scan after power-on operation
   Wire.begin(SDA, SCL);
-  ESP_LOGD(TAG, "==================Scan Wire ==================");
+  ESP_LOGD(TAG, "================== Scan Wire ==================");
   delay(100); // Add a small delay to ensure the I2C bus is ready
   scanDevices(&Wire);
-#endif
 
-#ifdef SDA1
+#ifdef HAS_SDA1
   Wire1.begin(SDA1, SCL1);
-  ESP_LOGD(TAG, "==================Scan Wire1==================");
+  ESP_LOGD(TAG, "================== Scan Wire1 ==================");
   delay(100); // Add a small delay to ensure the I2C bus is ready
   scanDevices(&Wire1);
 #endif
