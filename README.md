@@ -1,4 +1,6 @@
-# Arduino library for LoRa boards
+# MCUW_LoRa_boards
+
+Arduino library for LoRa boards.
 
 <video src="https://github.com/user-attachments/assets/22d95d18-f688-4b5a-a8a5-95e3825e6179" alt="LoRa demo with three boards"></video>
 
