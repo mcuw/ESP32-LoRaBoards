@@ -195,10 +195,6 @@ void LgLoraBoard::setupRadioBoard()
 #endif /*SD_SHARE_SPI_BUS*/
 #endif // HAS_SDCARD
 
-#ifdef I2C1_SDA
-  Wire1.begin(I2C1_SDA, I2C1_SCL);
-#endif
-
 #ifdef HAS_GPS
 #ifdef GPS_EN_PIN
   pinMode(GPS_EN_PIN, OUTPUT);
@@ -259,15 +255,17 @@ void LgLoraBoard::setupRadioBoard()
 #endif
 
 // Perform an I2C scan after power-on operation
-#ifdef I2C_SDA
-  Wire.begin(I2C_SDA, I2C_SCL);
+#ifdef SDA
+  Wire.begin(SDA, SCL);
   ESP_LOGD(TAG, "==================Scan Wire ==================");
+  delay(100); // Add a small delay to ensure the I2C bus is ready
   scanDevices(&Wire);
 #endif
 
-#ifdef I2C1_SDA
-  Wire1.begin(I2C1_SDA, I2C1_SCL);
+#ifdef SDA1
+  Wire1.begin(SDA1, SCL1);
   ESP_LOGD(TAG, "==================Scan Wire1==================");
+  delay(100); // Add a small delay to ensure the I2C bus is ready
   scanDevices(&Wire1);
 #endif
 
@@ -365,7 +363,19 @@ bool LgLoraBoard::beginRadioLib(bool restartOnFail)
 
 #if defined(USE_SX1262) || defined(USE_SX1276)
   ESP_LOGD(TAG, "LoRa: radio initialization started");
-  int16_t state = radio.begin();
+
+#ifdef USE_SX1262
+  // RadioLib defaults: freq = 434.0, bw = 125.0, sf = 9, cr = 7, syncWord = RADIOLIB_SX126X_SYNC_WORD_PRIVATE, power = 10, preambleLength = 8, tcxoVoltage = 1.6, useRegulatorLDO = false
+  int16_t state = radio.begin(LORA_RADIO_FREQ, LORA_RADIO_BW, LORA_RADIO_SF, LORA_RADIO_CR, LORA_RADIO_SYNC_WORD,
+                              LORA_RADIO_OUTPUT_POWER, LORA_RADIO_PREAMBLE_LENGTH, LORA_RADIO_TCXO_VOLTAGE, LORA_RADIO_USE_REGULATOR_LDO);
+#elif defined(USE_SX1276)
+  // RadioLib defaults: freq = 915.0, bw = 125.0, sf = 9, cr = 7, syncWord = RADIOLIB_SX127X_SYNC_WORD, power = 10, preambleLength = 8, gain = 0
+  int16_t state = radio.begin(LORA_RADIO_FREQ, LORA_RADIO_BW, LORA_RADIO_SF, LORA_RADIO_CR, LORA_RADIO_SYNC_WORD,
+                              LORA_RADIO_OUTPUT_POWER, LORA_RADIO_PREAMBLE_LENGTH, LORA_RADIO_GAIN);
+#else
+  int16_t state = RADIOLIB_ERR_CHIP_NOT_FOUND;
+#endif // USE_SX1262 elif USE_SX1276
+
   if (state != RADIOLIB_ERR_NONE)
   {
     ESP_LOGE(TAG, "LoRa: initialization failed, code: %d", state);
@@ -378,119 +388,27 @@ bool LgLoraBoard::beginRadioLib(bool restartOnFail)
   }
   ESP_LOGD(TAG, "LoRa: initialized successfully");
 
-  if (radio.setFrequency(LORA_RADIO_FREQ) == RADIOLIB_ERR_INVALID_FREQUENCY)
-  {
-    ESP_LOGE(TAG, "LoRa: selected frequency is invalid for this module");
-    if (restartOnFail)
-    {
-      delay(5000);
-      ESP.restart();
-    }
-    return false;
-  }
-
-  // meshcore 62.5 kHz
-  if (radio.setBandwidth(LORA_RADIO_BW) == RADIOLIB_ERR_INVALID_BANDWIDTH)
-  {
-    ESP_LOGE(TAG, "LoRa: selected bandwidth is invalid for this module");
-    if (restartOnFail)
-    {
-      delay(5000);
-      ESP.restart();
-    }
-    return false;
-  }
-
-  // set spreading factor to 8
-  if (radio.setSpreadingFactor(LORA_RADIO_SF) == RADIOLIB_ERR_INVALID_SPREADING_FACTOR)
-  {
-    ESP_LOGE(TAG, "LoRa: selected spreading factor is invalid for this module");
-    if (restartOnFail)
-    {
-      delay(5000);
-      ESP.restart();
-    }
-    return false;
-  }
-
-  // set coding rate to 8
-  if (radio.setCodingRate(LORA_RADIO_CR) == RADIOLIB_ERR_INVALID_CODING_RATE)
-  {
-    ESP_LOGE(TAG, "LoRa: selected coding rate is invalid for this module");
-    if (restartOnFail)
-    {
-      delay(5000);
-      ESP.restart();
-    }
-    return false;
-  }
-
-  // Secure set LoRa sync word
-  if (radio.setSyncWord(LORA_RADIO_SYNC_WORD) != RADIOLIB_ERR_NONE)
-  {
-    ESP_LOGE(TAG, "LoRa: unable to set sync word!");
-    if (restartOnFail)
-    {
-      delay(5000);
-      ESP.restart();
-    }
-    return false;
-  }
-
-  // set output power to 22 dBm (accepted range is -17 - 22 dBm)
-  if (radio.setOutputPower(LORA_RADIO_OUTPUT_POWER) == RADIOLIB_ERR_INVALID_OUTPUT_POWER) {
-    ESP_LOGE(TAG, "Selected output power is invalid for this module!");
-    delay(5000);
-    ESP.restart();
-  }
-
   // set over current protection limit to 80 mA (accepted range is 45 - 240 mA)
   // NOTE: set value to 0 to disable overcurrent protection
-  if (radio.setCurrentLimit(LORA_RADIO_CURRENT_LIMIT) == RADIOLIB_ERR_INVALID_CURRENT_LIMIT) {
+  if (radio.setCurrentLimit(LORA_RADIO_CURRENT_LIMIT) == RADIOLIB_ERR_INVALID_CURRENT_LIMIT)
+  {
     ESP_LOGE(TAG, "Selected current limit is invalid for this module!");
     delay(5000);
     ESP.restart();
   }
 
-  // set LoRa preamble length to 15 symbols (accepted range is 0 - 65535)
-  if (radio.setPreambleLength(LORA_RADIO_PREAMBLE_LENGTH) == RADIOLIB_ERR_INVALID_PREAMBLE_LENGTH) {
-    ESP_LOGE(TAG, "Selected preamble length is invalid for this module");
-    delay(5000);
-    ESP.restart();
-  }
-
   // disable CRC
-  if (radio.setCRC(LORA_RADIO_CRC) == RADIOLIB_ERR_INVALID_CRC_CONFIGURATION) {
+  if (radio.setCRC(LORA_RADIO_CRC) == RADIOLIB_ERR_INVALID_CRC_CONFIGURATION)
+  {
     ESP_LOGE(TAG, "Selected CRC is invalid for this module");
     delay(5000);
     ESP.restart();
   }
 
-#ifdef USE_SX1262
-  // Some SX126x modules have TCXO (temperature compensated crystal
-  // oscillator). To configure TCXO reference voltage,
-  // the following method can be used.
-  if (radio.setTCXO(2.4) == RADIOLIB_ERR_INVALID_TCXO_VOLTAGE) {
-    ESP_LOGE(TAG, "Selected TCXO voltage is invalid for this module!");
-    delay(5000);
-    ESP.restart();
-  }
-
-  // Some SX126x modules use DIO2 as RF switch. To enable
-  // this feature, the following method can be used.
-  // NOTE: As long as DIO2 is configured to control RF switch,
-  //       it can't be used as interrupt pin!
-  if (radio.setDio2AsRfSwitch() != RADIOLIB_ERR_NONE) {
-    ESP_LOGE(TAG, "Failed to set DIO2 as RF switch!");
-    delay(5000);
-    ESP.restart();
-  }
-#endif // ifdef USE_SX1262
-
   return true;
 #endif // defined(USE_SX1262) || defined(USE_SX1276)
 
-return false;
+  return false;
 }
 
 bool LgLoraBoard::setupRadio(bool restartOnFail)

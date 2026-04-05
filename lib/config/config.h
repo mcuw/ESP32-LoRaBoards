@@ -29,6 +29,9 @@
 #ifndef LORA_RADIO_CRC
 #define LORA_RADIO_CRC false // enable or disable CRC
 #endif
+#ifndef LORA_RADIO_GAIN
+#define LORA_RADIO_GAIN 0 // in dB, accepted range is -6 - 6 dB, set value to 0 for automatic gain control
+#endif
 
 // #define ENABLE_BLE      //Enable ble function
 
@@ -37,7 +40,14 @@
 #define LORA_RADIO_OUTPUT_POWER 22 // in dBm, accepted range is -17 - 22 dBm
 #endif
 #ifndef LORA_RADIO_SYNC_WORD
-#define LORA_RADIO_SYNC_WORD 0x24 // LoRa sync word (0x34 for public networks, 0x24 for SX126x private networks)
+// LoRa sync word RADIOLIB_SX126X_SYNC_WORD_PRIVATE=0x12 for private networks, RADIOLIB_SX126X_SYNC_WORD_PUBLIC=0x34 for public networks
+#define LORA_RADIO_SYNC_WORD RADIOLIB_SX126X_SYNC_WORD_PRIVATE
+#endif
+#ifndef LORA_RADIO_TCXO_VOLTAGE
+#define LORA_RADIO_TCXO_VOLTAGE 2.4 // in V, allowed values are 1.6, 1.7, 1.8, 2.2, 2.4, 2.7, 3.0 and 3.3 V. Set to 0 to disable TCXO control
+#endif
+#ifndef LORA_RADIO_USE_REGULATOR_LDO
+#define LORA_RADIO_USE_REGULATOR_LDO false // set to true if your module uses regulator LDO for TCXO power supply, set to false if it uses VDD
 #endif
 #endif // USE_SX1262
 
@@ -46,7 +56,8 @@
 #define LORA_RADIO_OUTPUT_POWER 20 // in dBm, accepted range is -17 - 20 dBm
 #endif
 #ifndef LORA_RADIO_SYNC_WORD
-#define LORA_RADIO_SYNC_WORD 0x12 // LoRa sync word (0x34 for public networks, 0x12 for SX127x private networks)
+// LoRa sync word RADIOLIB_SX127X_SYNC_WORD=0x12 for private networks, RADIOLIB_SX127X_SYNC_WORD_LORAWAN=0x34 for public networks
+#define LORA_RADIO_SYNC_WORD RADIOLIB_SX127X_SYNC_WORD
 #endif
 #endif // USE_SX1276
 
