@@ -620,6 +620,9 @@ int LgLoraBoard::transmitRadioBytes(int packetSize, byte *data)
     // some other error occurred
     ESP_LOGE(TAG, "LoRa: Failed to transmit data, code %d", state);
   }
+
+  // start listening for LoRa packets again
+  radio.startReceive();
 #endif
 
   return state;

@@ -11,6 +11,8 @@ public:
     LgButton();
     virtual ~LgButton();
 
+    // set up button with interrupt handlers for click, double click and long press
+    // issue for T-Beam v0.7: if the button is configured to use GPIO38, it can't be used as an interrupt pin, so only click and double click interrupt will work, long press won't work. This is a hardware limitation of ESP32, not a software issue. To use long press, you need to change the button pin to a different GPIO that supports interrupts.
     void setupButton(callbackFunction onClickInterrupt, callbackFunction onDoubleClickInterrupt = nullptr, callbackFunction onLongPressInterrupt = nullptr);
     
     // optional: reconfigure the button with a new settings

@@ -30,7 +30,7 @@ void loop() {
       
       Serial.println(F("Blinking LED to indicate packet received, if supported by the board ..."));
       board.blinkLed();
-      delay(400);
+      delay(100);
       Serial.println(F("Disabling LED after packet received"));
       board.disableLed();
     } else {

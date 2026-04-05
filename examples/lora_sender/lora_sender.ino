@@ -13,14 +13,8 @@ int count = 0;
 LgLoraBoard board;
 volatile bool buttonClicked = false;
 
-void onButtonClick() {
+void onClickInterrupt() {
   buttonClicked = true;
-}
-
-void onButtonDoubleClick() {
-}
-
-void onButtonLongPress() {
 }
 
 void setup() {
@@ -31,7 +25,7 @@ void setup() {
   board.setupRadioBoard();
   board.printBoardStatus();
 
-  board.setupButton(onButtonClick, onButtonDoubleClick, onButtonLongPress);
+  board.setupButton(onClickInterrupt);
 }
 
 void loop() {
