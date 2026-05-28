@@ -49,7 +49,7 @@ add libraries
 lib_deps =
   ; RadioLib - LoRa library
   ; releases https://github.com/jgromes/RadioLib/releases
-  jgromes/RadioLib @ ^7.6.0
+  jgromes/RadioLib @ ^7.7.0
   ; button handling library, used e.g. in TTGO T-Beam
   mathertel/OneButton @ ^2.6.2
   ; XPowersLib - power management series library for ESP32, including PSRAM power management
